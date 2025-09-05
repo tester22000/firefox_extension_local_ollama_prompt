@@ -23,7 +23,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
         selectionText: info.selectionText
     };
 
-    chrome.action.openPopup()
+    browser.action.openPopup()
 });
 
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {

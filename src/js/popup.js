@@ -68,73 +68,59 @@ $(document).ready(function () {
         hideError();
         hideStatusMessage();
 
-        const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-
         const isImageContext = isImageAction() 
-
-        const action = getContentAction()
-        const imageUrl =  $("#input_imageUrl").val() 
         if ( isImageContext) {
+            const imageUrl =  $("#input_imageUrl").val() 
             callImageAction(promptText, selectedModel, imageUrl)
         } else {
             callTextAction(promptText, selectedModel)
         }
     });
 
-    async function callTextAction(promptText, selectedModel){
+    async function callTextAction(promptText, selectedModel) {
+        await fetchAndProcessResponse(promptText, selectedModel, false);
+    }
+
+    async function callImageAction(promptText, selectedModel, imageUrl) {
+        await fetchAndProcessResponse(promptText, selectedModel, true, imageUrl);
+    }
+
+    async function fetchAndProcessResponse(promptText, selectedModel, isImageContext, imageUrl = "") {
         const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
 
-        const action = getContentAction()
-        browser.tabs.sendMessage(currentTab.id, { action: action})
-            .then(async (response) => {
-                
-                const content = response.content
+        const action = getContentAction();
+        let content;
+        let images
 
-                try {
-                    const ollamaResponse = await callOllamaApi(promptText, selectedModel, content, []);
-                    const renderedHtml = marked.parse(ollamaResponse);
-                    $('#response-output').html(renderedHtml);
+        try {
+            if (isImageContext) {
+                images = [(await browser.runtime.sendMessage({ action: action, imageUrl: imageUrl })).content];
+                content = ""
+            } else {
+                content = (await browser.tabs.sendMessage(currentTab.id, { action: action })).content;
+                images = []
+            }
+        } catch (error) {
+            showError(`현재 탭의 컨텐츠를 가져오는 데 실패했습니다. ${error}`);
+            disableRunButtonAndHideSpinner();
+            return;
+        }
 
-                } catch (error) {
-                    showError(error.message);
-                } finally {
-                    $('#run-button').prop('disabled', false);
-                    $('#loading-spinner').addClass('hidden');
-                }
-            })
-            .catch((error) => {
-                showError('현재 탭의 컨텐츠를 가져오는 데 실패했습니다.');
-                $('#run-button').prop('disabled', false);
-                $('#loading-spinner').addClass('hidden');
-            });
+        try {
+            const ollamaResponse = await callOllamaApi(promptText, selectedModel, content, images);
+            const renderedHtml = marked.parse(ollamaResponse);
+            $('#response-output').html(renderedHtml);
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            disableRunButtonAndHideSpinner();
+        }
     }
 
-    async function callImageAction(promptText, selectedModel, imageUrl){
-        const action = getContentAction()
-        browser.runtime.sendMessage({ action: action, imageUrl: imageUrl})
-            .then(async (response) => {
-                
-                const images = [response.content]
-
-                try {
-                    const ollamaResponse = await callOllamaApi(promptText, selectedModel, '', images);
-                    const renderedHtml = marked.parse(ollamaResponse);
-                    $('#response-output').html(renderedHtml);
-
-                } catch (error) {
-                    showError(error.message);
-                } finally {
-                    $('#run-button').prop('disabled', false);
-                    $('#loading-spinner').addClass('hidden');
-                }
-            })
-            .catch((error) => {
-                showError('현재 탭의 컨텐츠를 가져오는 데 실패했습니다.');
-                $('#run-button').prop('disabled', false);
-                $('#loading-spinner').addClass('hidden');
-            });
+    function disableRunButtonAndHideSpinner() {
+        $('#run-button').prop('disabled', false);
+        $('#loading-spinner').addClass('hidden');
     }
-
 
     function isImageAction() {
         return $('#input_context').val() === OLLAMA_IMAGE
