@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama Prompt</title>
+    <link rel="stylesheet" href="src/css/tailwind.css">
+    <script src="src/lib/jquery-3.7.1.min.js"></script>
+    <script type="module" src="src/lib/marked.min.js"></script>
+    <script src="src/js/popup.js"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 p-4 min-w-[300px]">
+
+    <div class="container mx-auto">
+        <h1 class="text-xl font-bold mb-4 text-center">Local Ollama Prompt</h1>
+
+        <input type="text" id="input_context" value="" class="hidden">
+        <input type="text" id="input_imageUrl" value="" class="hidden">
+        <input type="text" id="input_selectionText" value="" class="hidden">
+        <input type="text" id="input_base64Img" value="" class="hidden">
+        <div class="mb-4">
+            <label for="model-list" class="block text-sm font-medium text-gray-700">모델 목록</label>
+            <select id="model-list"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                disabled>
+                <option value="">모델을 선택하세요</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="prompt-list" class="block text-sm font-medium text-gray-700">프롬프트 목록</label>
+            <select id="prompt-list"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <option value="">프롬프트를 선택하세요</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="prompt-input" class="block text-sm font-medium text-gray-700">프롬프트 입력</label>
+            <textarea id="prompt-input" rows="4"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="프롬프트를 입력하세요..."></textarea>
+        </div>
+
+        <div id="action-buttons" class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
+            <button id="save-prompt-button"
+                class="w-full md:w-1/2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                프롬프트 저장
+            </button>
+            <button id="run-button"
+                class="w-full md:w-1/2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                실행
+            </button>
+        </div>
+
+        <div id="loading-spinner" class="hidden text-center my-4">
+            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status">
+                <span
+                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+            </div>
+            <p class="mt-2 text-sm text-gray-600">처리 중...</p>
+        </div>
+
+        <div id="status-message" class="hidden text-sm text-center my-2">
+        </div>
+
+        <div id="response-output"
+            class="p-4 bg-white border border-gray-200 rounded-md leading-relaxed shadow-inner text-sm overflow-auto max-h-64">
+        </div>
+
+        <div id="error-message" class="hidden text-red-600 mt-4 text-center">
+        </div>
+
+    </div>
+
+</body>
+
+</html>
