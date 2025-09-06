@@ -1,5 +1,10 @@
 {
     "manifest_version": 3,
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "extension-local-ollama-prompt-tester22000@gmail.com"
+        }
+    },
     "name": "local ollama prompt",
     "version": "1.0",
     "description": "Ollama API를 사용하여 웹 콘텐츠, 이미지, 텍스트를 분석하는 Firefox 확장 기능",
