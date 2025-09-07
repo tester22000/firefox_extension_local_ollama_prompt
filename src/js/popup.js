@@ -45,7 +45,7 @@ $(document).ready(function () {
 
         browser.storage.local.get(dbKey, function (result) {
             const prompts = result[dbKey] || [];
-            prompts.push(promptContent.trim());
+            prompts.push(promptContent.trim().replace(/"/g,"'"));
             browser.storage.local.set({ [dbKey]: prompts }, function () {
                 showStatusMessage('프롬프트가 성공적으로 저장되었습니다!', 'text-green-600');
                 updatePromptList(prompts);
@@ -149,6 +149,14 @@ $(document).ready(function () {
 
             if($('#input_context').val().length<1){
                 updatePromptList(textPrompts);
+            }
+
+            if(getContentAction()=="getPageContent"){
+                const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+                content = (await browser.tabs.sendMessage(currentTab.id, { action: "getPageContent"})).content;
+                $('#response-output').html(content)
+
+
             }
         } catch (error) {
             showError(error.message);

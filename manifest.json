@@ -6,7 +6,7 @@
         }
     },
     "name": "local ollama prompt",
-    "version": "1.0",
+    "version": "1.0.1",
     "description": "Ollama API를 사용하여 웹 콘텐츠, 이미지, 텍스트를 분석하는 Firefox 확장 기능",
     "permissions": [
         "storage",

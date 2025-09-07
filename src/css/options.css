@@ -1,0 +1,25 @@
+/* 기본적인 탭 스타일 */
+.tabs {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+.tabs li {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+.tabs li.active {
+    border-bottom-color: transparent;
+    background-color: #fff;
+    font-weight: bold;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
