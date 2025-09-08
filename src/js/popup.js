@@ -230,12 +230,21 @@ $(document).ready(function () {
         }
 
         const input_prompt = content.length > 0 ? `${prompt}\n\n${content}` : `${prompt}\n\n`
-        const url = `${ollamaServerUrl}/api/generate`;
+        const url = `${ollamaServerUrl}/api/chat`;
         const payload = {
             model: model,
-            prompt: input_prompt,
-            stream: true,
-            images: images
+            messages: [
+                {
+                    role: "system",
+                    content: prompt,
+                },
+                {
+                    role: "user",
+                    content: content,
+                    images: images
+                }
+            ],
+            stream: true
         };
 
         const response = await fetch(url, {
@@ -263,8 +272,8 @@ $(document).ready(function () {
                 if (line.trim() === '') continue;
                 try {
                     const data = JSON.parse(line);
-                    if (data.response) {
-                        result += data.response;
+                    if (data.message && data.message.content) {
+                        result += data.message.content;
                         $('#response-output').html(marked.parse(result));
                     }
                 } catch (e) {
